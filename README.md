@@ -9,7 +9,7 @@ A simple script to automatically play the chrome offline dinosaur dino.
 - Using this we can reliably detect the current state the dinosaur is in. 
 
 ## Usage
-- Open [chrome://dino/](chrome://dino/) and open developer tools.
+- Open **chrome://dino/** and open developer tools.
 - Copy DinoBot script into the console in the browser and hit enter.
 - Now start the dino by pressing space bar.
 - The dinosaur should now be controlling itself !
@@ -19,3 +19,5 @@ A simple script to automatically play the chrome offline dinosaur dino.
 ![Jumping_Dino](screenshots/jump.png)
 
 ![Docking_Dino](screenshots/duck.png)
+
+![First_Death](screenshots/death.png)

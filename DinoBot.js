@@ -1,12 +1,11 @@
-
-let dino = (function(document) {
+var game = (function(document) {
     'use strict';
 
-    let canvas = document.getElementsByClassName('runner-canvas')[0];
-    let ctx = canvas.getContext('2d');
+    var canvas = document.getElementsByClassName('runner-canvas')[0];
+    var ctx = canvas.getContext('2d');
 
     // constants
-    let data = {
+    var C = {
         // pixels
         blankPixel: {r: 0, g: 0, b: 0, a: 0},
         blackPixel: {r: 83, g: 83, b: 83, a: 255},
@@ -56,65 +55,65 @@ let dino = (function(document) {
         midBirdLookAhead: 50,
     };
 
-    // dino logic
-    let runIntervalId = -1;
-    let currentDinoState = data.stateGround;
-    let stateCommanded = false;
-    let oldDinoState = data.stateGround;
-    let currentTime = 0;
-    let currentLookAheadBuffer;
-    let currentBirdLookAheadBuffer;
+    // game logic
+    var runIntervalId = -1;
+    var currentDinoState = C.stateGround;
+    var stateCommanded = false;
+    var oldDinoState = C.stateGround;
+    var currentTime = 0;
+    var currentLookAheadBuffer;
+    var currentBirdLookAheadBuffer;
     function run() {
-        let i;
+        var i;
 
         if (runIntervalId == -1) {
-            runIntervalId = setInterval(run, data.runIntervalMs);
+            runIntervalId = setInterval(run, C.runIntervalMs);
         }
 
         currentLookAheadBuffer = getLookAheadBuffer(currentTime);
         currentBirdLookAheadBuffer = getLookAheadBufferBird(currentTime);
 
-        let imageData = ctx.getImageData(0, 0, data.width, data.height);
+        var imageData = ctx.getImageData(0, 0, C.width, C.height);
 
-        let eyePixel = getPixel(imageData, data.dinoEyeX, data.dinoEyeY);
-        let eyePixelDuck = getPixel(imageData, data.dinoDuckEyeX, data.dinoDuckEyeY);
-        if (isPixelEqual(eyePixel, data.dinoEyeColor)) {
-            currentDinoState = data.stateGround;
-        } else if (isPixelEqual(eyePixelDuck, data.dinoEyeColor)) {
-            currentDinoState = data.stateDuck;
+        var eyePixel = getPixel(imageData, C.dinoEyeX, C.dinoEyeY);
+        var eyePixelDuck = getPixel(imageData, C.dinoDuckEyeX, C.dinoDuckEyeY);
+        if (isPixelEqual(eyePixel, C.dinoEyeColor)) {
+            currentDinoState = C.stateGround;
+        } else if (isPixelEqual(eyePixelDuck, C.dinoEyeColor)) {
+            currentDinoState = C.stateDuck;
         } else {
-            currentDinoState = data.stateAirbone;
+            currentDinoState = C.stateAirbone;
         }
 
-        let lookforwardDanger = false;
+        var lookforwardDanger = false;
         for (i = 0; i < currentLookAheadBuffer; i += 2) {
-            if (isPixelEqual(getPixel(imageData, data.lookAheadX + i, data.lookAheadY), data.blackPixel)) {
+            if (isPixelEqual(getPixel(imageData, C.lookAheadX + i, C.lookAheadY), C.blackPixel)) {
                 lookforwardDanger = true;
                 break;
             }
         }
 
-        if (currentDinoState === data.stateGround) {
+        if (currentDinoState === C.stateGround) {
             // if dino on ground, scan ahead to see if there are obstacles. If there are
             // jump
 
             if (lookforwardDanger && !stateCommanded) {
-                issueMove(data.mJump);
+                issueMove(C.mJump);
                 stateCommanded = true;
                 console.log('JUMP!');
 
             } else {
                 // watch for birds in mid level
-                let birdDanger = false;
-                for (i = data.midBirdX; i < data.midBirdX + currentBirdLookAheadBuffer; i += 2) {
-                    if (isPixelEqual(getPixel(imageData, i, data.midBirdY), data.blackPixel)) {
+                var birdDanger = false;
+                for (i = C.midBirdX; i < C.midBirdX + currentBirdLookAheadBuffer; i += 2) {
+                    if (isPixelEqual(getPixel(imageData, i, C.midBirdY), C.blackPixel)) {
                         birdDanger = true;
                         break;
                     }
                 }
 
                 if (birdDanger) {
-                    issueMove(data.mDuck, 400);
+                    issueMove(C.mDuck, 400);
                     console.log('DUCK!');
                 }
             }
@@ -123,10 +122,10 @@ let dino = (function(document) {
         // when in air and the dino crosses the obstacle press down
         // to goto ground faster. This could be an improvement if tuned
         // properly. Removed as of now.
-        // else if (currentDinoState === data.stateAirbone) {
-        //     let downClear = true;
-        //     for (i = 0; i < data.lookDownWidth; i++) {
-        //         if (!isPixelEqual(getPixel(imageData, data.lookDownStartX + i, data.lookDownStartY), data.blankPixel)) {
+        // else if (currentDinoState === C.stateAirbone) {
+        //     var downClear = true;
+        //     for (i = 0; i < C.lookDownWidth; i++) {
+        //         if (!isPixelEqual(getPixel(imageData, C.lookDownStartX + i, C.lookDownStartY), C.blankPixel)) {
         //             downClear = false;
         //         }
         //     }
@@ -134,7 +133,7 @@ let dino = (function(document) {
         //     if (!lookforwardDanger && downClear && !stateCommanded) {
         //         console.log('DOWN!');
         //         stateCommanded = true;
-        //         issueMove(data.mDuck);
+        //         issueMove(C.mDuck);
         //     }
         // }
 
@@ -143,7 +142,7 @@ let dino = (function(document) {
         }
 
         oldDinoState = currentDinoState;
-        currentTime += data.runIntervalMs;
+        currentTime += C.runIntervalMs;
 
         console.log({
             currentDinoState: currentDinoState,
@@ -166,7 +165,7 @@ let dino = (function(document) {
      */
     function issueMove(move, timeout) {
         switch (move) {
-            case data.mJump:
+            case C.mJump:
                 if (!timeout) {
                     timeout = 85;
                 }
@@ -177,7 +176,7 @@ let dino = (function(document) {
                 }, timeout);
                 break;
 
-            case data.mDuck:
+            case C.mDuck:
                 if (!timeout) {
                     timeout = 200;
                 }
@@ -199,7 +198,7 @@ let dino = (function(document) {
      * faster it helps to look further. As you've to jump
      * earlier to cross obstacles.
      *
-     * @param time the current in dino time
+     * @param time the current in game time
      * @return number of look ahead pixels
      */
     function getLookAheadBuffer(time) {
@@ -232,10 +231,10 @@ let dino = (function(document) {
     }
 
     /**
-     * Given the current dino time return the look ahead
+     * Given the current game time return the look ahead
      * pixels for birds
      * 
-     * @param time current in dino time
+     * @param time current in game time
      * @return number of pixels to look ahead for birds
      */
     function getLookAheadBufferBird(time) {
@@ -251,7 +250,7 @@ let dino = (function(document) {
      * dispatches this event
      */
     function issueKeyPress(type, keycode) {
-        let eventObj = document.createEventObject ?
+        var eventObj = document.createEventObject ?
             document.createEventObject() : document.createEvent("Events");
 
         if(eventObj.initEvent){
@@ -272,7 +271,7 @@ let dino = (function(document) {
      * within bounds
      */
     function getPixel(imgData, x, y) {
-        let dataStart = (x + y * data.width) * 4;
+        var dataStart = (x + y * C.width) * 4;
 
         return {
             r: imgData.data[dataStart],
@@ -287,10 +286,10 @@ let dino = (function(document) {
      * equality
      */
     function isPixelEqual(p1, p2) {
-        return  p1.r === p2.r &&
-                p1.g === p2.g &&
-                p1.b === p2.b &&
-                p1.a === p2.a;
+        return p1.r === p2.r &&
+            p1.g === p2.g &&
+            p1.b === p2.b &&
+            p1.a === p2.a;
     }
 
     // exports
@@ -301,4 +300,4 @@ let dino = (function(document) {
 })(document)
 
 
-dino.run();
+game.run();

@@ -28,7 +28,7 @@ A simple script to automatically play the chrome offline dinosaur dino.
 
 ## Demo
 
-- **[YouTube](https://youtu.be/4ehEikF9lQ0)**
+[![Immortality Demo](https://img.youtube.com/vi/4ehEikF9lQ0/0.jpg)](https://www.youtube.com/watch?v=4ehEikF9lQ0)
 
 ## Screenshot
 
